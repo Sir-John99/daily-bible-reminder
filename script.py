@@ -24,7 +24,8 @@ def send_whatsapp_reminder():
         print(f"Notice: No reading scheduled for today ({today_str}).")
         return
         
-   message_text = row['Message'].values[0].replace('\\n', '\n')
+    # Unpack formatting markers into actual beautiful line breaks
+    message_text = row['Message'].values[0].replace('\\n', '\n')
     
     # 4. Your Targeted WhatsApp Group ID
     CHAT_ID = "120363404249902820@g.us" 
