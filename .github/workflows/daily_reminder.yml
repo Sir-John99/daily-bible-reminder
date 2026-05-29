@@ -3,7 +3,7 @@ name: Send Daily Bible Reminder
 on:
   schedule:
     # Set to 6:00 AM UTC daily
-    - cron: '0 6 * * *'
+    - cron: '0 4 * * *'
   workflow_dispatch: 
 
 jobs:
