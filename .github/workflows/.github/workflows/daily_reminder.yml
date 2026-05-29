@@ -1,0 +1,29 @@
+name: Send Daily Bible Reminder
+
+on:
+  schedule:
+    # This sets the exact time! 
+    # Time is in UTC (Greenwich Mean Time). 06:00 means 6:00 AM UTC.
+    - cron: '0 6 * * *'
+  workflow_dispatch: # This allows us to click a button and run it manually for testing!
+
+jobs:
+  send_reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install pandas requests
+
+      - name: Run script to send WhatsApp message
+        env:
+          GREEN_API_ID: ${{ secrets.GREEN_API_ID }}
+          GREEN_API_TOKEN: ${{ secrets.GREEN_API_TOKEN }}
+        run: python script.py
