@@ -3,7 +3,7 @@ name: Send Daily Bible Reminder
 on:
   schedule:
     # 4:00 AM UTC/GMT daily (Matches Ghana Local Time perfectly)
-    - cron: '0 1 * * *'
+    - cron: '48 3 * * *'
   workflow_dispatch: 
 
 jobs:
