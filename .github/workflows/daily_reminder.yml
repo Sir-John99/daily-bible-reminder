@@ -2,8 +2,8 @@ name: Send Daily Bible Reminder
 
 on:
   schedule:
-    # 4:00 AM UTC/GMT daily (Matches Ghana Local Time perfectly)
-    - cron: '48 3 * * *'
+    # Wake up early at 1:00 AM UTC/GMT to account for any GitHub server delays
+    - cron: '0 1 * * *'
   workflow_dispatch: 
 
 jobs:
