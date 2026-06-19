@@ -9,18 +9,22 @@ ID_INSTANCE = os.getenv("GREEN_API_ID")
 API_TOKEN = os.getenv("GREEN_API_TOKEN")
 
 def wait_until_exact_time(target_hour, target_minute):
-    """Pauses the script until the exact target hour and minute (local Ghana/GMT time)."""
+    """Pauses the script until the next occurrence of 1:15 AM."""
     now = datetime.datetime.now()
+    
+    # Target is 1:15 AM today
     target_time = now.replace(hour=target_hour, minute=target_minute, second=0, microsecond=0)
     
-    # If GitHub triggers late and it's already past 1:15 AM, run immediately
-    if now > target_time:
-        print(f"System loaded at {now.strftime('%H:%M:%S')}. Past target time, sending immediately.")
+    # If it's currently late at night (e.g., 9:00 PM), the target 1:15 AM belongs to tomorrow
+    if now > target_time and now.hour >= 12:
+        target_time += datetime.timedelta(days=1)
+    # If the workflow actually runs late and loads AFTER 1:15 AM the same morning, send immediately
+    elif now > target_time and now.hour < 12:
+        print(f"System loaded late at {now.strftime('%H:%M:%S')}. Sending immediately.")
         return
 
-    # Calculate the exact difference in seconds
     delay_seconds = (target_time - now).total_seconds()
-    print(f"System loaded early at {now.strftime('%H:%M:%S')}. Holding message for {int(delay_seconds)} seconds...")
+    print(f"System loaded at {now.strftime('%H:%M:%S')}. Waiting {int(delay_seconds // 60)} minutes until 1:15 AM...")
     time.sleep(delay_seconds)
     print(f"Target reached! Current time: {datetime.datetime.now().strftime('%H:%M:%S')}")
 
@@ -44,7 +48,7 @@ def send_whatsapp_reminder():
         print(f"Notice: No reading scheduled for today ({today_str}).")
         return
         
-    # Unpack formatting markers into actual beautiful line breaks
+    # Unpack formatting markers into actual line breaks
     message_text = row['Message'].values[0].replace('\\n', '\n')
     
     # 5. Your Targeted WhatsApp Group ID
@@ -59,7 +63,7 @@ def send_whatsapp_reminder():
     headers = {'Content-Type': 'application/json'}
     
     # 7. Send the message via Green API
-    print(f"Attempting to send today's message: {message_text}")
+    print(f"Attempting to send today's message for date: {today_str}")
     response = requests.post(url, json=payload, headers=headers)
     
     if response.status_code == 200:
